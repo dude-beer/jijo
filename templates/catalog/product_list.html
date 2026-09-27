@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+Каталог — Jijo
+{% endblock %}
+
+
+{% block content %}
+
+<section class="container section">
+
+    <h1>Каталог</h1>
+
+
+    <div class="catalog-layout">
+
+
+        <aside class="filters">
+
+            <h3>Категории</h3>
+
+            <a href="{% url 'catalog:product_list' %}">
+                Все товары
+            </a>
+
+            {% for category in categories %}
+
+                <a
+                    href="{% url 'catalog:product_list' %}?category={{ category.id }}"
+                >
+                    {{ category.name }}
+            </a>
+
+            {% endfor %}
+
+
+            <h3>Размер</h3>
+
+            {% for size in sizes %}
+
+                <a
+                    href="{% url 'catalog:product_list' %}?size={{ size.id }}"
+                >
+                    {{ size.name }}
+                </a>
+
+            {% endfor %}
+
+        </aside>
+
+
+        <div class="catalog-products">
+
+            <div class="products-grid">
+
+                {% for product in products %}
+
+                    <article class="product-card">
+
+                        <a href="{% url 'catalog:product_detail' product.slug %}">
+
+                            <div class="product-image">
+
+                                {% if product.main_image %}
+
+                                    <img
+                                        src="{{ product.main_image.image.url }}"
+                                        alt="{{ product.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="no-image">
+                                        Нет фото
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </a>
+
+
+                        <div class="product-info">
+
+                            <div class="product-category">
+                                {{ product.category.name }}
+                            </div>
+
+                            <h3>
+                                <a href="{% url 'catalog:product_detail' product.slug %}">
+                                    {{ product.name }}
+                                </a>
+                            </h3>
+
+                            <p class="product-color">
+                                {{ product.color.name }}
+                            </p>
+
+                            <p class="product-price">
+                                {{ product.price }} ₽
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                {% empty %}
+
+                    <p>
+                        По выбранным параметрам товаров нет.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

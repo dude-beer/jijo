@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+Вход — Jijo
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <h1>Вход</h1>
+
+        <p class="auth-subtitle">
+            Войдите в свой аккаунт Jijo
+        </p>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-error">
+
+                    Неверное имя пользователя или пароль.
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-field">
+
+                <label for="{{ form.username.id_for_label }}">
+                    Имя пользователя
+                </label>
+
+                {{ form.username }}
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label for="{{ form.password.id_for_label }}">
+                    Пароль
+                </label>
+
+                {{ form.password }}
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="auth-button"
+            >
+                Войти
+            </button>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            Нет аккаунта?
+
+            <a href="{% url 'accounts:register' %}">
+                Зарегистрироваться
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

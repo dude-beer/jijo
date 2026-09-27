@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ product.name }} — Jijo
+{% endblock %}
+
+
+{% block content %}
+
+<div class="product-page">
+
+    <!-- Левая часть: фотографии -->
+    <div class="product-gallery">
+
+        <!-- Миниатюры -->
+        <div class="product-thumbnails">
+
+            {% for image in product.images.all %}
+
+                <button
+                    type="button"
+                    class="thumbnail {% if forloop.first %}active{% endif %}"
+                    onclick="changeMainImage('{{ image.image.url }}', this)"
+                >
+                    <img
+                        src="{{ image.image.url }}"
+                        alt="{{ product.name }}"
+                    >
+                </button>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Большая фотография -->
+        <div class="main-product-image">
+
+            {% if product.main_image %}
+
+                <img
+                    id="mainProductImage"
+                    src="{{ product.main_image.image.url }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                <div class="no-product-image">
+                    Нет фотографии
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Правая часть: информация -->
+    <div class="product-information">
+
+        <div class="product-detail-category">
+            {{ product.category.name }}
+        </div>
+
+
+        <h1>
+            {{ product.name }}
+        </h1>
+
+
+        <div class="product-detail-price">
+            {{ product.price }} ₽
+        </div>
+
+
+        <!-- Цвет -->
+        <div class="product-detail-color">
+
+            <h3>Цвет</h3>
+
+            <div class="color-option">
+
+                <span
+                    class="color-circle"
+                    style="background-color: {{ product.color.hex_code }};">
+                </span>
+
+                <span>
+                    {{ product.color.name }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Описание -->
+        <div class="product-description">
+
+            <h3>Описание</h3>
+
+            <p>
+                {{ product.description }}
+            </p>
+
+        </div>
+
+
+        <!-- Размеры -->
+        <div class="product-sizes">
+
+            <h3>Размер</h3>
+
+            <div class="size-options">
+
+                {% for stock in product.stock_items.all %}
+
+                    {% if stock.quantity > 0 %}
+
+                        <button
+                            type="button"
+                            class="product-size"
+                            data-size-id="{{ stock.size.id }}"
+                            onclick="selectSize(this)"
+                        >
+                            {{ stock.size.name }}
+                        </button>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            class="product-size disabled"
+                            disabled
+                        >
+                            {{ stock.size.name }}
+                        </button>
+
+                    {% endif %}
+
+                {% empty %}
+
+                    <p>
+                        Размеры отсутствуют.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Наличие -->
+        <div class="product-stock">
+
+            <span class="stock-dot"></span>
+
+            Выберите размер
+
+        </div>
+
+
+        <!-- Кнопка -->
+        <form
+            method="post"
+            action="{% url 'cart:add' product.id %}"
+            class="add-cart-form"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="size"
+                id="selectedSize"
+            >
+
+            <input
+                type="hidden"
+                name="quantity"
+                value="1"
+            >
+
+            <button
+                type="submit"
+                class="add-cart-button"
+                id="addCartButton"
+                disabled
+            >
+                Выберите размер
+            </button>
+
+        </form>
+
+
+        <!-- Дополнительная информация -->
+        <div class="product-features">
+
+            <div class="feature">
+
+                <span class="feature-icon">
+                    🚚
+                </span>
+
+                <div>
+                    <strong>Быстрая доставка</strong>
+                    <p>Доставка по адресу</p>
+                </div>
+
+            </div>
+
+
+            <div class="feature">
+
+                <span class="feature-icon">
+                    ✓
+                </span>
+
+                <div>
+                    <strong>Гарантия качества</strong>
+                    <p>Качественная одежда</p>
+                </div>
+
+            </div>
+
+
+            <div class="feature">
+
+                <span class="feature-icon">
+                    ↩
+                </span>
+
+                <div>
+                    <strong>Лёгкий возврат</strong>
+                    <p>Возврат товара</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function changeMainImage(imageUrl, button) {
+
+    const mainImage = document.getElementById("mainProductImage");
+
+    if (mainImage) {
+        mainImage.src = imageUrl;
+    }
+
+
+    const thumbnails = document.querySelectorAll(".thumbnail");
+
+    thumbnails.forEach(function(thumbnail) {
+        thumbnail.classList.remove("active");
+    });
+
+
+    button.classList.add("active");
+}
+
+
+function selectSize(button) {
+
+    const sizes = document.querySelectorAll(".product-size");
+
+    sizes.forEach(function(size) {
+        size.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+
+
+    const selectedSize = document.getElementById(
+        "selectedSize"
+    );
+
+    selectedSize.value = button.dataset.sizeId;
+
+
+    const addCartButton = document.getElementById(
+        "addCartButton"
+    );
+
+    addCartButton.disabled = false;
+
+    addCartButton.textContent =
+        "Добавить в корзину";
+}
+
+</script>
+
+{% endblock %}

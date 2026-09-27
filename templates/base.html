@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Jijo{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="container header-inner">
+
+        <a href="{% url 'catalog:home' %}" class="logo">
+            Jijo
+        </a>
+
+        <nav class="nav">
+            <a href="{% url 'catalog:home' %}">
+                Главная
+            </a>
+
+            <a href="{% url 'catalog:product_list' %}">
+                Каталог
+            </a>
+
+            <a href="#">
+                Корзина
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'accounts:profile' %}">
+                    Профиль
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'accounts:login' %}">
+                    Войти
+                </a>
+
+            {% endif %}
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+
+<footer class="footer">
+
+    <div class="container">
+        <p>© 2026 Jijo</p>
+    </div>
+
+</footer>
+
+</body>
+</html>

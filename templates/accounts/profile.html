@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}
+Мой профиль — Jijo
+{% endblock %}
+
+
+{% block content %}
+
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <div>
+
+            <p class="profile-label">
+                Личный кабинет
+            </p>
+
+            <h1>
+                {{ user.username }}
+            </h1>
+
+        </div>
+
+
+        <a
+            href="{% url 'accounts:logout' %}"
+            class="logout-button"
+        >
+            Выйти
+        </a>
+
+    </div>
+
+
+    <div class="profile-grid">
+
+
+        <div class="profile-card">
+
+            <h2>Мои данные</h2>
+
+
+            <div class="profile-row">
+
+                <span>
+                    Имя пользователя
+                </span>
+
+                <strong>
+                    {{ user.username }}
+                </strong>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <span>
+                    Email
+                </span>
+
+                <strong>
+                    {% if user.email %}
+                        {{ user.email }}
+                    {% else %}
+                        Не указан
+                    {% endif %}
+                </strong>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <span>
+                    Дата регистрации
+                </span>
+
+                <strong>
+                    {{ user.date_joined|date:"d.m.Y" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <h2>Мои заказы</h2>
+
+            <p class="empty-profile">
+
+                Здесь будут отображаться ваши заказы.
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

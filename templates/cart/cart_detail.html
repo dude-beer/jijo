@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Корзина — Jijo
+{% endblock %}
+
+
+{% block content %}
+
+<div class="cart-page">
+
+    <div class="cart-header">
+
+        <div>
+
+            <p class="cart-label">
+                Jijo
+            </p>
+
+            <h1>
+                Корзина
+            </h1>
+
+        </div>
+
+    </div>
+
+
+    {% if messages %}
+
+        <div class="cart-messages">
+
+            {% for message in messages %}
+
+                <div class="cart-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if items %}
+
+        <div class="cart-layout">
+
+
+            <!-- ТОВАРЫ -->
+
+            <div class="cart-products">
+
+                {% for item in items %}
+
+                    <div class="cart-item">
+
+                        <div class="cart-item-image">
+
+                            {% if item.product.main_image %}
+
+                                <img
+                                    src="{{ item.product.main_image.image.url }}"
+                                    alt="{{ item.product.name }}"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="cart-item-info">
+
+                            <div class="cart-item-category">
+                                {{ item.product.category.name }}
+                            </div>
+
+                            <h2>
+                                {{ item.product.name }}
+                            </h2>
+
+                            <p>
+                                Размер:
+                                <strong>
+                                    {{ item.size.name }}
+                                </strong>
+                            </p>
+
+                            <p class="cart-item-price">
+                                {{ item.product.price }} ₽
+                            </p>
+
+
+                            <form
+                                method="post"
+                                action="{% url 'cart:update' item.id %}"
+                                class="quantity-form"
+                            >
+
+                                {% csrf_token %}
+
+                                <label>
+                                    Количество:
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    value="{{ item.quantity }}"
+                                    min="1"
+                                >
+
+                                <button type="submit">
+                                    Обновить
+                                </button>
+
+                            </form>
+
+
+                            <a
+                                href="{% url 'cart:remove' item.id %}"
+                                class="remove-cart-item"
+                            >
+                                Удалить
+                            </a>
+
+                        </div>
+
+
+                        <div class="cart-item-total">
+
+                            {{ item.subtotal }} ₽
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ИТОГ -->
+
+            <aside class="cart-summary">
+
+                <h2>
+                    Ваш заказ
+                </h2>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Товары
+                    </span>
+
+                    <strong>
+                        {{ subtotal }} ₽
+                    </strong>
+
+                </div>
+
+
+                {% if promo %}
+
+                    <div class="summary-row discount">
+
+                        <span>
+                            Скидка
+                            ({{ promo.discount_percent }}%)
+                        </span>
+
+                        <strong>
+                            -{{ discount }} ₽
+                        </strong>
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Доставка
+                    </span>
+
+                    <strong>
+                        {{ delivery_price }} ₽
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <div class="summary-total">
+
+                    <span>
+                        Итого
+                    </span>
+
+                    <strong>
+                        {{ total }} ₽
+                    </strong>
+
+                </div>
+
+
+                <!-- ПРОМОКОД -->
+
+                <div class="promo-section">
+
+                    <h3>
+                        Промокод
+                    </h3>
+
+                    <form
+                        method="post"
+                        action="{% url 'cart:promo' %}"
+                        class="promo-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="text"
+                            name="code"
+                            placeholder="Введите промокод"
+                            value="{% if promo %}{{ promo.code }}{% endif %}"
+                        >
+
+                        <button type="submit">
+                            Применить
+                        </button>
+
+                    </form>
+
+                    {% if promo %}
+
+                        <p class="promo-applied">
+                            Промокод {{ promo.code }}
+                            применён.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="checkout-button"
+                >
+                    Оформить заказ
+                </button>
+
+            </aside>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="empty-cart">
+
+            <h2>
+                Ваша корзина пуста
+            </h2>
+
+            <p>
+                Добавьте товары из каталога.
+            </p>
+
+            <a
+                href="{% url 'catalog:product_list' %}"
+                class="continue-shopping"
+            >
+                Перейти в каталог
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
